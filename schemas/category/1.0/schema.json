@@ -34,8 +34,7 @@
             "type": "string"
         },
         "trackable": {
-            "type": "boolean",
-            "default": false
+            "type": "boolean"
         },
         "orgIdFieldName": {
             "type": "string"
