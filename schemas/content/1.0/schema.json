@@ -1411,6 +1411,9 @@
     },
     "migrationVersion": {
       "type": "number"
+    },
+    "duration": {
+      "type": "string"
     }
   }
 }
