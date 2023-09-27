@@ -1119,7 +1119,7 @@
         "autoBatch": {
           "type": "string",
           "enum": ["Yes","No"],
-          "default": "No"
+          "default": "Yes"
         }
       },
       "default": {
