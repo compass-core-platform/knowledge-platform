@@ -1,7 +1,7 @@
 {
     "restrictProps": {
         "create" : [
-            "status", "dialcodes"
+            "status"
         ],
         "copy" : [
             "status"
@@ -34,11 +34,6 @@
         "primaryKey": ["content_id"]
     },
     "relations": {
-        "concepts": {
-            "type": "associatedTo",
-            "direction": "out",
-            "objects": ["Concept"]
-        },
         "questions": {
             "type": "associatedTo",
             "direction": "out",
@@ -47,12 +42,12 @@
         "children": {
             "type": "hasSequenceMember",
             "direction": "out",
-            "objects": ["Content", "ContentImage"]
+            "objects": ["Content"]
         },
         "collections": {
             "type": "hasSequenceMember",
             "direction": "in",
-            "objects": ["Content", "ContentImage"]
+            "objects": ["Content"]
         },
         "usedByContent": {
             "type": "associatedTo",
@@ -72,9 +67,9 @@
     },
     "version": "enable",
     "versionCheckMode": "ON",
-    "frameworkCategories": ["board","medium","subject","gradeLevel","difficultyLevel","topic", "subDomains", "subjectCodes"],
-    "orgFrameworkTerms": ["boardIds", "gradeLevelIds", "subjectIds", "mediumIds", "topicsIds"],
-    "targetFrameworkTerms": ["targetFWIds", "targetBoardIds", "targetGradeLevelIds", "targetSubjectIds", "targetMediumIds", "targetTopicIds"],
+    "frameworkCategories": ["taxonomylevel1","taxonomylevel2","taxonomylevel3","taxonomylevel4","taxonomylevel5","taxonomylevel6", "taxonomylevel7"],
+    "orgFrameworkTerms": ["taxonomylevel1", "taxonomylevel2", "taxonomylevel3", "taxonomyleve4", "taxonomylevel5", "taxonomylevel6", "taxonomylevel7"],
+    "targetFrameworkTerms": ["taxonomylevel1", "taxonomylevel2", "taxonomylevel3", "taxonomyleve4", "taxonomylevel5", "taxonomylevel6", "taxonomylevel7"],
     "edge": {
         "properties": {
             "license": "License"
@@ -94,12 +89,13 @@
     "searchProps": {
         "status": ["Live"],
         "softConstraints": {
-            "medium": 15,
-            "subject": 15,
-            "ageGroup": 1,
-            "gradeLevel": 7,
-            "board": 4,
-            "relatedBoards": 4
+            "taxonomylevel1": 15,
+            "taxonomylevel2": 15,
+            "taxonomylevel3": 1,
+            "taxonomylevel4": 7,
+            "taxonomylevel5": 4,
+            "taxonomylevel6": 4,
+            "taxonomylevel7": 4
         }
     },
     "schema_restrict_api": false

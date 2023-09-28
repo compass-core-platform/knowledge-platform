@@ -91,10 +91,6 @@
         "application/quiz"
       ]
     },
-    "osId": {
-      "type": "string",
-      "default": "org.ekstep.launcher"
-    },
     "contentEncoding": {
       "type": "string",
       "enum": [
@@ -130,28 +126,9 @@
       ],
       "default": "content"
     },
-    "os": {
-      "type": "array",
-      "items": {
-        "type" : "string",
-        "enum": [
-          "All",
-          "Android",
-          "iOS",
-          "Windows"
-        ]
-      },
-      "default": ["All"]
-    },
-    "minOsVersion": {
-      "type": "string"
-    },
     "compatibilityLevel": {
       "type": "number",
       "default": 1
-    },
-    "minGenieVersion": {
-      "type": "string"
     },
     "minSupportedVersion": {
       "type": "string"
@@ -178,36 +155,9 @@
       ],
       "default": "Default"
     },
-    "audience": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "Student",
-          "Teacher",
-          "Administrator",
-          "Parent",
-          "Others",
-          "Other"
-        ]
-      },
-      "default": ["Student"]
-    },
     "posterImage": {
       "type": "string",
       "format": "url"
-    },
-    "badgeAssertions": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
-    },
-    "targets": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
     },
     "contentCredits": {
       "type": "array",
@@ -239,54 +189,11 @@
     "size": {
       "type": "number"
     },
-    "idealScreenSize": {
-      "type": "string",
-      "enum": [
-        "small",
-        "normal",
-        "large",
-        "xlarge",
-        "other"
-      ],
-      "default": "normal"
-    },
-    "idealScreenDensity": {
-      "type": "string",
-      "enum": [
-        "ldpi",
-        "mdpi",
-        "hdpi",
-        "xhdpi",
-        "xxhdpi",
-        "xxxhdpi"
-      ],
-      "default": "hdpi"
-    },
-    "releaseNotes": {
-      "type": "array"
-    },
     "pkgVersion": {
       "type": "number"
     },
-    "semanticVersion": {
-      "type": "string"
-    },
     "versionKey": {
       "type": "string"
-    },
-    "resources": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "Speaker",
-          "Touch",
-          "Microphone",
-          "GPS",
-          "Motion Sensor",
-          "Compass"
-        ]
-      }
     },
     "downloadUrl": {
       "type": "string",
@@ -312,9 +219,6 @@
     },
     "createdFor": {
       "type": "array"
-    },
-    "developer": {
-      "type": "string"
     },
     "source": {
       "type": "string"
@@ -367,74 +271,6 @@
     "license": {
       "type": "string",
       "default": "CC BY 4.0"
-    },
-    "language": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "English",
-          "Hindi",
-          "Assamese",
-          "Bengali",
-          "Gujarati",
-          "Kannada",
-          "Malayalam",
-          "Marathi",
-          "Nepali",
-          "Odia",
-          "Punjabi",
-          "Tamil",
-          "Telugu",
-          "Urdu",
-          "Sanskrit",
-          "Maithili",
-          "Munda",
-          "Santali",
-          "Juang",
-          "Ho",
-          "Other"
-        ]
-      },
-      "default": ["English"]
-    },
-    "languageCode": {
-      "type": "array"
-    },
-    "words": {
-      "type": "array"
-    },
-    "text": {
-      "type": "array"
-    },
-    "forkable": {
-      "type": "boolean"
-    },
-    "translatable": {
-      "type": "boolean"
-    },
-    "ageGroup": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "<5",
-          "5-6",
-          "6-7",
-          "7-8",
-          "8-10",
-          ">10",
-          "Other"
-        ]
-      }
-    },
-    "interactivityLevel": {
-      "type": "string",
-      "enum": [
-        "High",
-        "Medium",
-        "Low"
-      ]
     },
     "contentType": {
       "type": "string",
@@ -492,238 +328,25 @@
         "Practical"
       ]
     },
-    "category": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "core",
-          "learning",
-          "literacy",
-          "math",
-          "science",
-          "time",
-          "wordnet",
-          "game",
-          "mcq",
-          "mtf",
-          "ftb",
-          "library"
-        ]
-      }
-    },
-    "templateType": {
-      "type": "string",
-      "enum": [
-        "story",
-        "worksheet",
-        "mcq",
-        "ftb",
-        "mtf",
-        "recognition",
-        "activity",
-        "widget",
-        "other"
-      ]
-    },
-    "genre": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "Picture Books",
-          "Chapter Books",
-          "Flash Cards",
-          "Serial Books",
-          "Alphabet Books",
-          "Folktales",
-          "Fiction",
-          "Non-Fiction",
-          "Poems/Rhymes",
-          "Plays",
-          "Comics",
-          "Words"
-        ]
-      }
-    },
-    "theme": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "History",
-          "Adventure",
-          "Mystery",
-          "Science",
-          "Nature",
-          "Art",
-          "Music",
-          "Funny",
-          "Family",
-          "Life Skills",
-          "Scary",
-          "School Stories",
-          "Holidays",
-          "Hobby",
-          "Geography",
-          "Rural",
-          "Urban"
-        ]
-      }
-    },
-    "themes": {
-      "type": "array"
-    },
     "rating": {
-      "type": "number"
-    },
-    "rating_a": {
-      "type": "number"
-    },
-    "quality": {
-      "type": "number"
-    },
-    "genieScore": {
-      "type": "number"
-    },
-    "authoringScore": {
       "type": "number"
     },
     "popularity": {
       "type": "number"
     },
-    "downloads": {
-      "type": "number"
-    },
-    "launchUrl": {
-      "type": "string"
-    },
-    "activity_class": {
-      "type": "string"
-    },
-    "draftImage": {
-      "type": "string"
-    },
-    "scaffolding": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "Tutorial",
-          "Help",
-          "Practice"
-        ]
-      }
-    },
-    "interceptionPoints": {
-      "type": "object",
-      "items": {
-        "type": "array"
-      },
-      "default": {}
-    },
-    "interceptionType": {
-      "type": "string",
-      "enum": [
-        "Timestamp"
-      ]
-    },
-    "feedback": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "Right/Wrong",
-          "Reflection",
-          "Guidance",
-          "Learn from Mistakes",
-          "Adaptive Feedback",
-          "Interrupts",
-          "Rich Feedback"
-        ]
-      }
-    },
-    "feedbackType": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "Audio",
-          "Visual",
-          "Textual",
-          "Tactile"
-        ]
-      }
-    },
-    "teachingMode": {
-      "type": "string",
-      "enum": [
-        "Abstract",
-        "Concrete",
-        "Pictorial"
-      ]
-    },
-    "skills": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "Listening",
-          "Speaking",
-          "Reading",
-          "Writing",
-          "Touch",
-          "Gestures",
-          "Draw"
-        ]
-      }
-    },
     "keywords": {
       "type": "array"
-    },
-    "domain": {
-      "type": "array"
-    },
-    "dialcodes": {
-      "type": "array"
-    },
-    "optStatus": {
-      "type": "string",
-      "enum": [
-        "Pending",
-        "Processing",
-        "Error",
-        "Complete"
-      ]
     },
     "description": {
       "type": "string"
     },
-    "instructions": {
-      "type": "string"
-    },
     "body": {
-      "type": "string"
-    },
-    "oldBody": {
-      "type": "string"
-    },
-    "stageIcons": {
       "type": "string"
     },
     "editorState": {
       "type": "string"
     },
     "data": {
-      "type": "array"
-    },
-    "loadingMessage": {
-      "type": "string"
-    },
-    "checksum": {
-      "type": "string"
-    },
-    "learningObjective": {
       "type": "array"
     },
     "createdBy": {
@@ -762,78 +385,6 @@
     "versionCreatedBy": {
       "type": "string"
     },
-    "me_totalSessionsCount": {
-      "type": "number"
-    },
-    "me_creationSessions": {
-      "type": "number"
-    },
-    "me_creationTimespent": {
-      "type": "number"
-    },
-    "me_totalTimespent": {
-      "type": "number"
-    },
-    "me_totalInteractions": {
-      "type": "number"
-    },
-    "me_averageInteractionsPerMin": {
-      "type": "number"
-    },
-    "me_averageSessionsPerDevice": {
-      "type": "number"
-    },
-    "me_totalDevices": {
-      "type": "number"
-    },
-    "me_averageTimespentPerSession": {
-      "type": "number"
-    },
-    "me_averageRating": {
-      "type": "number"
-    },
-    "me_totalDownloads": {
-      "type": "number"
-    },
-    "me_totalSideloads": {
-      "type": "number"
-    },
-    "me_totalRatings": {
-      "type": "number"
-    },
-    "me_totalComments": {
-      "type": "number"
-    },
-    "me_totalUsage": {
-      "type": "number"
-    },
-    "me_totalLiveContentUsage": {
-      "type": "number"
-    },
-    "me_usageLastWeek": {
-      "type": "number"
-    },
-    "me_deletionsLastWeek": {
-      "type": "number"
-    },
-    "me_lastUsedOn": {
-      "type": "string"
-    },
-    "me_lastRemovedOn": {
-      "type": "string"
-    },
-    "me_hierarchyLevel": {
-      "type": "number"
-    },
-    "me_totalDialcodeAttached": {
-      "type": "number"
-    },
-    "me_totalDialcodeLinkedToContent": {
-      "type": "number"
-    },
-    "me_totalDialcode": {
-      "type": "array"
-    },
     "flagReasons": {
       "type": "array",
       "items": {
@@ -853,9 +404,6 @@
       "type": "array"
     },
     "lastFlaggedOn": {
-      "type": "string"
-    },
-    "tempData": {
       "type": "string"
     },
     "copyType": {
@@ -883,12 +431,6 @@
     "rejectComment": {
       "type": "string"
     },
-    "totalQuestions": {
-      "type": "number"
-    },
-    "totalScore": {
-      "type": "number"
-    },
     "ownershipType": {
       "type": "array",
       "items": {
@@ -900,22 +442,8 @@
       },
       "default": ["createdBy"]
     },
-    "reservedDialcodes": {
-      "type": "object"
-    },
-    "dialcodeRequired": {
-      "type": "string",
-      "enum": [
-        "Yes",
-        "No"
-      ],
-      "default": "No"
-    },
     "lockKey": {
       "type": "string"
-    },
-    "badgeAssociations": {
-      "type": "object"
     },
     "framework": {
       "type": "string",
@@ -989,9 +517,6 @@
       "type": "number",
       "default": 2
     },
-    "qrCodeProcessId": {
-      "type": "string"
-    },
     "migratedUrl": {
       "type": "string",
       "format": "url"
@@ -1020,28 +545,28 @@
         "type": "object"
       }
     },
-    "subject" : {
+    "taxonomylevel1" : {
       "type": "array"
     },
-    "medium" : {
+    "taxonomylevel2" : {
       "type": "array"
     },
-    "gradeLevel" : {
+    "taxonomylevel3" : {
       "type": "array"
     },
-    "topic" : {
+    "taxonomylevel4" : {
       "type": "array"
     },
-    "subDomains" : {
+    "taxonomylevel5" : {
       "type": "array"
     },
-    "subjectCodes" : {
+    "taxonomylevel6" : {
       "type": "array"
     },
     "difficultyLevel" : {
       "type": "string"
     },
-    "board" : {
+    "taxonomylevel7" : {
       "type": "string"
     },
     "licenseterms" : {
@@ -1058,38 +583,8 @@
     "itemSetPreviewUrl": {
       "type": "string"
     },
-    "textbook_name" : {
-      "type": "array"
-    },
-    "level1Name" : {
-      "type": "array"
-    },
-    "level1Concept" : {
-      "type": "array"
-    },
-    "level2Name" : {
-      "type": "array"
-    },
-    "level2Concept" : {
-      "type": "array"
-    },
-    "level3Name" : {
-      "type": "array"
-    },
-    "level3Concept" : {
-      "type": "array"
-    },
     "sourceURL" : {
       "type": "string"
-    },
-    "me_totalTimeSpentInSec": {
-      "type": "object"
-    },
-    "me_totalPlaySessionCount": {
-      "type": "object"
-    },
-    "me_totalRatingsCount": {
-      "type": "number"
     },
     "monitorable": {
       "type": "array",
@@ -1100,13 +595,6 @@
           "score-report"
         ]
       }
-    },
-    "userConsent": {
-      "type": "string",
-      "enum": [
-        "Yes",
-        "No"
-      ]
     },
     "trackable": {
       "type": "object",
@@ -1142,26 +630,6 @@
       },
       "additionalProperties": false
     },
-    "discussionForum":{
-      "type": "object",
-      "properties":
-      {
-        "enabled":
-        {
-          "type": "string",
-          "enum": ["Yes", "No"],
-          "default": "No"
-        }
-      },
-      "default":
-      {
-        "enabled": "No"
-      },
-      "additionalProperties": false
-    },
-    "processId": {
-      "type": "string"
-    },
     "primaryCategory": {
       "type": "string"
     },
@@ -1172,9 +640,6 @@
       }
     },
     "prevStatus": {
-      "type": "string"
-    },
-    "cloudStorageKey": {
       "type": "string"
     },
     "batches": {
@@ -1195,53 +660,8 @@
     "showNotification": {
       "type": "boolean"
     },
-    "collectionId" : {
-      "type": "string"
-    },
-    "learningOutcome": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "displayScore": {
-      "type": "boolean"
-    },
-    "catalogPaths" : {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
-    },
-    "competencies" : {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
-    },
-    "sharedWith" : {
-      "type": "array"
-    },
     "isExternal": {
       "type": "boolean"
-    },
-    "learningMode": {
-      "type": "string",
-      "enum": [
-        "Self Paced",
-        "Instructor Led",
-        "Classroom"
-      ]
-    },
-    "creatorLogo" : {
-      "type": "string",
-      "format": "url"
-    },
-    "subTitles" : {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
     },
     "reviewStatus" : {
       "type" : "string",
@@ -1249,171 +669,6 @@
         "InReview",
         "Reviewed"
       ]
-    },
-    "boardIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "gradeLevelIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "subjectIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "mediumIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "topicsIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "targetFWIds":{
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "targetBoardIds":{
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "targetGradeLevelIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "targetSubjectIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "targetMediumIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "targetTopicIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "maxAttempts": {
-      "type": "number"
-    },
-    "se_FWIds":{
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_boardIds":{
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_subjectIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_mediumIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_topicIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_gradeLevelIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_boards":{
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_subjects":{
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_mediums": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_topics": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "se_gradeLevels": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "transcripts": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
-    },
-    "accessibility": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
-    },
-    "taxonomyPaths_v2": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
-    },
-    "competencies_v3": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
-    },
-    "migrationVersion": {
-      "type": "number"
-    },
-    "duration": {
-      "type": "string"
     }
   }
 }
