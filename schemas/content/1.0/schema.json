@@ -1124,7 +1124,7 @@
       },
       "default": {
         "enabled": "No",
-        "autoBatch": "No"
+        "autoBatch": "Yes"
       },
       "additionalProperties": false
     },
