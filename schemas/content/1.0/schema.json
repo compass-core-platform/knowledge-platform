@@ -657,12 +657,6 @@
         "type": "object"
       }
     },
-    "showNotification": {
-      "type": "boolean"
-    },
-    "isExternal": {
-      "type": "boolean"
-    },
     "reviewStatus" : {
       "type" : "string",
       "enum": [
