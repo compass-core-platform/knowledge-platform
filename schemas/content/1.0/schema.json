@@ -1119,12 +1119,12 @@
         "autoBatch": {
           "type": "string",
           "enum": ["Yes","No"],
-          "default": "Yes"
+          "default": "No"
         }
       },
       "default": {
         "enabled": "No",
-        "autoBatch": "Yes"
+        "autoBatch": "No"
       },
       "additionalProperties": false
     },
