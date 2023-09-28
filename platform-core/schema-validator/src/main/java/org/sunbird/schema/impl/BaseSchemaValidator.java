@@ -165,6 +165,7 @@ public abstract class BaseSchemaValidator implements ISchemaValidator {
      */
     public List<String> getJsonProps() {
         try {
+            System.out.println(schema.toString());
             return ((Map<String, Object>) (new ObjectMapper().readValue(((BasicJsonSchema) schema).get("properties")
                     .getValueAsJson().asJsonObject().toString(), Map.class))).entrySet().stream().filter(entry ->
                     StringUtils.equalsIgnoreCase("object", (String) ((Map<String, Object>) entry.getValue()).get("type")) ||
