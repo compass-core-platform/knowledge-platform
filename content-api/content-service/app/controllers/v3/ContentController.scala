@@ -3,6 +3,8 @@ package controllers.v3
 import akka.actor.{ActorRef, ActorSystem}
 import com.google.inject.Singleton
 import controllers.BaseController
+import org.slf4j.LoggerFactory
+
 import javax.inject.{Inject, Named}
 import org.sunbird.models.UploadParams
 import org.sunbird.common.dto.ResponseHandler
@@ -10,7 +12,6 @@ import play.api.mvc.ControllerComponents
 import utils.{ActorNames, ApiId, JavaJsonUtils}
 
 import scala.collection.JavaConverters._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -19,6 +20,7 @@ class ContentController @Inject()(@Named(ActorNames.CONTENT_ACTOR) contentActor:
     val objectType = "Content"
     val schemaName: String = "content"
     val version = "1.0"
+    val logger = LoggerFactory.getLogger(classOf[ContentController])
 
     def create() = Action.async { implicit request =>
         val headers = commonHeaders()
@@ -148,6 +150,7 @@ class ContentController @Inject()(@Named(ActorNames.CONTENT_ACTOR) contentActor:
     }
 
     def publish(identifier: String) = Action.async { implicit request =>
+        logger.info("publish controller");
         val headers = commonHeaders()
         val body = requestBody()
         val content = body.getOrDefault("content", new java.util.HashMap()).asInstanceOf[java.util.Map[String, Object]];

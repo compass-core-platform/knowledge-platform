@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils
 
 import javax.inject.Inject
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 import org.sunbird.`object`.importer.{ImportConfig, ImportManager}
 import org.sunbird.actor.core.BaseActor
 import org.sunbird.cache.impl.RedisCache
@@ -36,6 +37,7 @@ class ContentActor @Inject() (implicit oec: OntologyEngineContext, ss: StorageSe
 	implicit val ec: ExecutionContext = getContext().dispatcher
 	private lazy val importConfig = getImportConfig()
 	private lazy val importMgr = new ImportManager(importConfig)
+	val logger = LoggerFactory.getLogger(classOf[ContentActor])
 
 	override def onReceive(request: Request): Future[Response] = {
 		request.getOperation match {
@@ -202,6 +204,7 @@ class ContentActor @Inject() (implicit oec: OntologyEngineContext, ss: StorageSe
 	}
 
 	def publishContent(request: Request): Future[Response] = {
+		logger.info("publishContent from actor");
 		val identifier: String = request.getContext.getOrDefault(ContentConstants.IDENTIFIER, "").asInstanceOf[String]
 		val publisher: String = request.getRequest.getOrDefault(ContentConstants.LAST_PUBLISHED_BY, "").asInstanceOf[String]
 
@@ -210,12 +213,14 @@ class ContentActor @Inject() (implicit oec: OntologyEngineContext, ss: StorageSe
 		val readReq = new Request(request)
 		readReq.put(ContentConstants.IDENTIFIER, identifier)
 		readReq.put(ContentConstants.MODE, ContentConstants.EDIT_MODE)
+		logger.info("publishContent before caling dataNode.read");
 		DataNode.read(readReq).map(node => {
 			if (null != node & StringUtils.isNotBlank(node.getObjectType))
 				request.getContext.put(ContentConstants.SCHEMA_NAME, node.getObjectType.toLowerCase())
 			if (StringUtils.equalsAnyIgnoreCase(ContentConstants.PROCESSING, node.getMetadata.getOrDefault(ContentConstants.STATUS, "").asInstanceOf[String]))
 				throw new ClientException("ERR_NODE_ACCESS_DENIED", "Publish Operation Can't Be Applied On Node Under Processing State")
 			node.getMetadata.put(ContentConstants.LAST_PUBLISHED_BY, publisher)
+			logger.info("publishContent before caling publishmanager");
 			PublishManager.publish(request, node)
 		}).flatMap(f => f)
 	}
