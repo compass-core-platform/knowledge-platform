@@ -1,6 +1,7 @@
 package org.sunbird.content.publish.mgr
 
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 import org.sunbird.common.Platform
 import org.sunbird.common.dto.ResponseParams.StatusType
 import org.sunbird.common.dto.{Request, Response, ResponseParams}
@@ -13,13 +14,15 @@ import org.sunbird.mimetype.factory.MimeTypeManagerFactory
 import org.sunbird.telemetry.util.LogTelemetryEventUtil
 
 import java.util
+import java.util.logging.Logger
 import scala.concurrent.{ExecutionContext, Future}
 
 object PublishManager {
 
 	private val kfClient = new KafkaClient
-
+	val logger = Logger.getLogger("PublishManager")
 	def publish(request: Request, node: Node)(implicit oec: OntologyEngineContext, ec: ExecutionContext): Future[Response] = {
+		logger.info("PublishManager trying to publish")
 		val identifier: String = node.getIdentifier
 		val mimeType = node.getMetadata.getOrDefault(ContentConstants.MIME_TYPE, "").asInstanceOf[String]
 		val mgr = MimeTypeManagerFactory.getManager(node.getObjectType, mimeType)
