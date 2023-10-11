@@ -66,6 +66,12 @@
     },
     "value": {
       "dataType": "string"
+    },
+    "property1": {
+      "dataType": "string"
+    },
+    "property2": {
+      "dataType": "string"
     }
   }
 }
