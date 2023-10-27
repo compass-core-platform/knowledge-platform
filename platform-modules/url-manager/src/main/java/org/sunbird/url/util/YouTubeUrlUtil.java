@@ -37,7 +37,8 @@ public class YouTubeUrlUtil {
 	private static final String APP_NAME = Platform.config.hasPath("learning.content.youtube.application.name")
 			? Platform.config.getString("learning.content.youtube.application.name") : "fetch-youtube-license";
 
-	private static final String API_KEY = Platform.config.getString("learning_content_youtube_apikey");
+	private static final String API_KEY = Platform.config.hasPath("learning_content_youtube_apikey")
+			                              ? Platform.config.getString("learning_content_youtube_apikey") : "AIzaSyDM3bJae41FvItpvYqyDrO-l9XIhtPwVRw";
 
 	private static final List<String> VALID_LICENSES = Platform.config.hasPath("learning.valid_license") ?
 			Platform.config.getStringList("learning.valid_license") : Arrays.asList("creativeCommon");
