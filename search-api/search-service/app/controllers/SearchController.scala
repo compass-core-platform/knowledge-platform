@@ -63,4 +63,10 @@ class SearchController @Inject()(@Named(ActorNames.SEARCH_ACTOR) searchActor: Ac
         setHeaderContext(internalReq)
         getResult(mgr.count(internalReq, searchActor), ApiId.APPLICATION_COUNT)
     }
+
+    def metricSearch() = loggingAction.async { implicit request =>
+        val internalReq = getRequest(ApiId.APPLICATION_METRIC_SEARCH)
+        setHeaderContext(internalReq)
+        getResult(mgr.metricSearch(internalReq, searchActor), ApiId.APPLICATION_METRIC_SEARCH)
+    }
 }

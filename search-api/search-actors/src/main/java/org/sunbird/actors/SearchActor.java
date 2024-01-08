@@ -39,7 +39,7 @@ public class SearchActor extends SearchBaseActor {
     public Future<Response> onReceive(Request request) throws Throwable {
         String operation = request.getOperation();
         SearchProcessor processor = new SearchProcessor();
-        try{
+        try {
             if (StringUtils.equalsIgnoreCase("INDEX_SEARCH", operation)) {
                 SearchDTO searchDTO = getSearchDTO(request);
                 Future<Map<String, Object>> searchResult = processor.processSearch(searchDTO, true);
@@ -76,6 +76,15 @@ public class SearchActor extends SearchBaseActor {
                         return OK(getCompositeSearchResponse(lstResult));
                     }
                 }, getContext().dispatcher());
+            } else if (StringUtils.equalsIgnoreCase("METRIC_SEARCH", operation)) {
+                Future<Map<String, Object>> searchResult = processor.processSearch(getSearchDTO(request), true);
+                return searchResult.map(new Mapper<Map<String, Object>, Response>() {
+                    @Override
+                    public Response apply(Map<String, Object> lstResult) {
+                        Map<String, Object> summaryData = generateSummaryData(lstResult);
+                        return OK(getCompositeSearchResponse(summaryData));
+                    }
+                }, getContext().dispatcher());
             } else if (StringUtils.equalsIgnoreCase("GROUP_SEARCH_RESULT_BY_OBJECTTYPE", operation)) {
                 Map<String, Object> searchResponse = (Map<String, Object>) request.get("searchResult");
                 return Futures.successful(OK(getCompositeSearchResponse(searchResponse)));
@@ -90,7 +99,36 @@ public class SearchActor extends SearchBaseActor {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    // Function to generate summary data
+    private Map<String, Object> generateSummaryData(Map<String, Object> lstResult) {
+        Map<String, Object> summaryData = new HashMap<>();
+        summaryData.put("metrics", new ArrayList<>());
+        // Create a dictionary to store counts for each primary category and status
+        Map<String, Map<String, Integer>> categoryStatusCounts = new HashMap<>();
+        Map<String, Integer> categoryTotalCounts = new HashMap<>();
+        List<Map<String, Object>> results = (List<Map<String, Object>>) lstResult.get("results");
+        for (Map<String, Object> result : results) {
+            String primaryCategory = (String) result.get("primaryCategory");
+            String status = ((String) result.get("status")).toLowerCase();
+            // Initialize counts for the category if not present
+            categoryStatusCounts.computeIfAbsent(primaryCategory, k -> new HashMap<>());
+            // Increment the count for the specific status
+            categoryStatusCounts.get(primaryCategory).merge(status, 1, Integer::sum);
+            // Increment the total count for the specific category
+            categoryTotalCounts.merge(primaryCategory, 1, Integer::sum);
+        }
+        for (Map.Entry<String, Map<String, Integer>> entry : categoryStatusCounts.entrySet()) {
+            String primaryCategory = entry.getKey();
+            Map<String, Object> metric = new HashMap<>();
+            metric.put("primaryCategory", primaryCategory);
+            metric.put("status", entry.getValue());
+            metric.put("totalCount", categoryTotalCounts.get(primaryCategory));
+            ((List<Map<String, Object>>) summaryData.get("metrics")).add(metric);
+        }
+        return summaryData;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private SearchDTO getSearchDTO(Request request) throws Exception {
         SearchDTO searchObj = new SearchDTO();
         try {
@@ -329,10 +367,10 @@ public class SearchActor extends SearchBaseActor {
             try {
                 i = (int) num;
             } catch (Exception e) {
-                if(num instanceof String){
-                    try{
+                if (num instanceof String) {
+                    try {
                         return Integer.parseInt((String) num);
-                    }catch (Exception ex){
+                    } catch (Exception ex) {
                         throw new ClientException(SearchConstants.ERR_COMPOSITE_SEARCH_INVALID_PARAMS, "Invalid Input.", e);
                     }
                 }
@@ -365,7 +403,7 @@ public class SearchActor extends SearchBaseActor {
         return properties;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private List<Map<String, Object>> getSearchFilterProperties(Map<String, Object> filters, Boolean traversal, Request request)
             throws Exception {
         List<Map<String, Object>> properties = new ArrayList<Map<String, Object>>();
@@ -382,7 +420,7 @@ public class SearchActor extends SearchBaseActor {
                     }
                     List<String> identifiers = new ArrayList<>();
                     identifiers.addAll((List<String>) (List<?>) ids);
-                    if(!publishedStatus){
+                    if (!publishedStatus) {
                         for (Object id : ids) {
                             identifiers.add(id + ".img");
                         }
@@ -400,12 +438,12 @@ public class SearchActor extends SearchBaseActor {
                     objectTypes.addAll((List<String>) (List<?>) value);
 
                     for (Object val : value) {
-                        if((StringUtils.equalsIgnoreCase("Content", (String) val) || StringUtils.equalsIgnoreCase("Collection", (String) val) || StringUtils.equalsIgnoreCase("Asset", (String) val))){
+                        if ((StringUtils.equalsIgnoreCase("Content", (String) val) || StringUtils.equalsIgnoreCase("Collection", (String) val) || StringUtils.equalsIgnoreCase("Asset", (String) val))) {
                             objectTypes.add("Content");
                             objectTypes.add("Collection");
                             objectTypes.add("Asset");
                         }
-                        if((StringUtils.equalsIgnoreCase("Content", (String) val) || StringUtils.equalsIgnoreCase("Collection", (String) val) || StringUtils.equalsIgnoreCase("Asset", (String) val)) && !publishedStatus) {
+                        if ((StringUtils.equalsIgnoreCase("Content", (String) val) || StringUtils.equalsIgnoreCase("Collection", (String) val) || StringUtils.equalsIgnoreCase("Asset", (String) val)) && !publishedStatus) {
                             objectTypes.add("ContentImage");
                             objectTypes.add("Asset");
                             objectTypes.add("CollectionImage");
@@ -511,12 +549,12 @@ public class SearchActor extends SearchBaseActor {
         }
 
         if (!filters.containsKey("status") && !traversal) {
-            Map<String, Object> property = getFilterProperty("status", SearchConstants.SEARCH_OPERATION_EQUAL, Arrays.asList(new String[] { "Live" }));
+            Map<String, Object> property = getFilterProperty("status", SearchConstants.SEARCH_OPERATION_EQUAL, Arrays.asList(new String[]{"Live"}));
             properties.add(property);
         }
 
-        if (request != null && StringUtils.equalsIgnoreCase((String) request.getContext().getOrDefault("setDefaultVisibility",""),"true")  && setDefaultVisibility(filters)) {
-            Map<String, Object> property = getFilterProperty("visibility", SearchConstants.SEARCH_OPERATION_EQUAL, Arrays.asList(new String[] { "Default" }));
+        if (request != null && StringUtils.equalsIgnoreCase((String) request.getContext().getOrDefault("setDefaultVisibility", ""), "true") && setDefaultVisibility(filters)) {
+            Map<String, Object> property = getFilterProperty("visibility", SearchConstants.SEARCH_OPERATION_EQUAL, Arrays.asList(new String[]{"Default"}));
             properties.add(property);
         }
         return properties;
@@ -553,21 +591,21 @@ public class SearchActor extends SearchBaseActor {
 
     private boolean checkPublishedStatus(Map<String, Object> filters) {
         List<String> statuses = Arrays.asList("Live", "Unlisted");
-        Object status =filters.get("status");
+        Object status = filters.get("status");
         List<String> statusList = null;
-        if(null == status) {
+        if (null == status) {
             return true;
-        } else if((status instanceof String) && (statuses.contains(status))){
+        } else if ((status instanceof String) && (statuses.contains(status))) {
             statusList = Arrays.asList((String) status);
-        } else if(status instanceof String[]) {
+        } else if (status instanceof String[]) {
             statusList = Arrays.asList((String[]) status);
-        } else if(status instanceof List) {
+        } else if (status instanceof List) {
             statusList = (List<String>) status;
         }
 
-        if(CollectionUtils.isNotEmpty(statusList) && statusList.size() == 1 && statuses.contains(statusList.get(0)))
+        if (CollectionUtils.isNotEmpty(statusList) && statusList.size() == 1 && statuses.contains(statusList.get(0)))
             return true;
-        else if(CollectionUtils.isNotEmpty(statusList) && statuses.containsAll(statusList))
+        else if (CollectionUtils.isNotEmpty(statusList) && statuses.containsAll(statusList))
             return true;
         else
             return false;
@@ -586,9 +624,9 @@ public class SearchActor extends SearchBaseActor {
                         if (obj instanceof Map) {
                             Map<String, Object> map = (Map<String, Object>) obj;
                             String objectType = ((String) map.getOrDefault("objectType", "")).replaceAll("Image", "");
-                            if(StringUtils.equalsIgnoreCase("Collection", objectType) || StringUtils.equalsIgnoreCase("Asset", objectType))
+                            if (StringUtils.equalsIgnoreCase("Collection", objectType) || StringUtils.equalsIgnoreCase("Asset", objectType))
                                 map.replace("objectType", "Content");
-                            else 
+                            else
                                 map.replace("objectType", objectType);
                             if (StringUtils.isNotBlank(objectType)) {
                                 String key = getResultParamKey(objectType);
@@ -647,7 +685,7 @@ public class SearchActor extends SearchBaseActor {
         return null;
     }
 
-    @SuppressWarnings({ "rawtypes", "unused" })
+    @SuppressWarnings({"rawtypes", "unused"})
     private boolean isEmpty(Object o) {
         boolean result = false;
         if (o instanceof String) {
@@ -666,7 +704,7 @@ public class SearchActor extends SearchBaseActor {
      * @param parentRequest
      * @return
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Map<String, Object> getCollectionsResult(Map<String, Object> lstResult, SearchProcessor processor,
                                                      Request parentRequest) {
         List<Map> contentResults = (List<Map>) lstResult.get("results");
@@ -731,7 +769,7 @@ public class SearchActor extends SearchBaseActor {
      * @param contentIds
      * @return
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Map<String, Object> prepareCollectionResult(Map<String, Object> collectionResult, List<String> contentIds) {
         List<Map> results = new ArrayList<Map>();
         for (Map<String, Object> collection : (List<Map>) collectionResult.get("results")) {
@@ -748,7 +786,7 @@ public class SearchActor extends SearchBaseActor {
     }
 
     private void getAggregations(Map<String, Object> req, SearchDTO searchObj) {
-        if(null != req.get("aggregations") && CollectionUtils.isNotEmpty((List<Map<String, Object>>) req.get("aggregations"))){
+        if (null != req.get("aggregations") && CollectionUtils.isNotEmpty((List<Map<String, Object>>) req.get("aggregations"))) {
             searchObj.setAggregations((List<Map<String, Object>>) req.get("aggregations"));
         }
 
