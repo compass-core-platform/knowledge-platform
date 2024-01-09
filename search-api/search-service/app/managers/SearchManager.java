@@ -54,6 +54,11 @@ public class SearchManager {
         Future<Response> getRes = getSearchResponse(request, actor);
         return getRes;
     }
+    public Future<Response> metricSearch(Request request, ActorRef actor) {
+        request.setOperation(SearchOperations.METRIC_SEARCH.name());
+        Future<Response> getRes = getSearchResponse(request, actor);
+        return getRes;
+    }
     
     protected Future<Response> getSearchResponse(Request request, ActorRef actor) {
         Future<Response> res = null;
@@ -61,7 +66,7 @@ public class SearchManager {
             long startTime = System.currentTimeMillis();
             request.getContext().put("start_time", startTime);
             perfLogger.info(request.getContext().get("scenario_name") + ","
-                    + request.getContext().get("request_id") 
+                    + request.getContext().get("request_id")
                     + "," + request.getOperation() + ",STARTTIME," + startTime);
             res = ask(actor, request, WAIT_TIMEOUT)
                     .map(new Mapper<Object, Future<Response>>() {
@@ -104,8 +109,10 @@ public class SearchManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return res;
     }
+
 
     private String getUUID() {
         UUID uid = UUID.randomUUID();
