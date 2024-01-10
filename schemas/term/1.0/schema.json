@@ -66,6 +66,9 @@
     },
     "value": {
       "dataType": "string"
+    },
+    "moreProperties": {
+      "type": "object"
     }
   }
 }
