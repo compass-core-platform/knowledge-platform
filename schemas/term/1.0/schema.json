@@ -68,7 +68,7 @@
       "dataType": "string"
     },
     "moreProperties": {
-      "type": "object"
+      "dataType": "object"
     }
   }
 }
