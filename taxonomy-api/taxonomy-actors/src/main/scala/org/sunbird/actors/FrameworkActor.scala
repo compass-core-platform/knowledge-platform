@@ -1,6 +1,7 @@
 package org.sunbird.actors
 
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 import org.sunbird.actor.core.BaseActor
 import org.sunbird.common.Slug
 import org.sunbird.common.dto.{Request, Response, ResponseHandler}
@@ -23,6 +24,7 @@ import scala.collection.JavaConversions.mapAsJavaMap
 class FrameworkActor @Inject()(implicit oec: OntologyEngineContext) extends BaseActor {
 
   implicit val ec: ExecutionContext = getContext().dispatcher
+  val logger = LoggerFactory.getLogger(classOf[FrameworkActor])
 
   override def onReceive(request: Request): Future[Response] = {
     request.getOperation match {
@@ -132,8 +134,10 @@ class FrameworkActor @Inject()(implicit oec: OntologyEngineContext) extends Base
     getChannelReq.getContext.put(Constants.SCHEMA_NAME, Constants.CHANNEL_SCHEMA_NAME)
     getChannelReq.getContext.put(Constants.VERSION, Constants.CHANNEL_SCHEMA_VERSION)
     getChannelReq.put(Constants.IDENTIFIER, channel)
+      logger.info("before channelRead getChannelReq" +getChannelReq)
     DataNode.read(getChannelReq).map(node => {
       if (null != node && StringUtils.equalsAnyIgnoreCase(node.getIdentifier, channel)) {
+        logger.info("channelRead")
         val name = node.getMetadata.getOrDefault("name", "").asInstanceOf[String]
         val description = node.getMetadata.getOrDefault("description", "").asInstanceOf[String]
         request.getRequest.putAll(Map("name" -> name, "description" -> description).asJava)
@@ -147,13 +151,16 @@ class FrameworkActor @Inject()(implicit oec: OntologyEngineContext) extends Base
           getFrameworkReq.getContext.put(Constants.SCHEMA_NAME, Constants.FRAMEWORK_SCHEMA_NAME)
           getFrameworkReq.getContext.put(Constants.VERSION, Constants.FRAMEWORK_SCHEMA_VERSION)
           getFrameworkReq.put(Constants.IDENTIFIER, frameworkId)
+          logger.info("getFrameworkReq")
           val subGraph: Future[SubGraph] = DataSubGraph.read(request)
           subGraph.map(data => {
             val frameworkHierarchy = FrameworkManager.getCompleteMetadata(frameworkId, data)
             CategoryCache.setFramework(frameworkId, frameworkHierarchy)
+            logger.info("subGraph CategoryCache")
             val req = new Request(request)
             req.put("hierarchy", ScalaJsonUtils.serialize(frameworkHierarchy))
             req.put("identifier", frameworkId)
+            logger.info("subGraph req "+req)
             oec.graphService.saveExternalProps(req)
             ResponseHandler.OK.put(Constants.PUBLISH_STATUS, s"Publish Event for Framework Id '${node.getIdentifier}' is pushed Successfully!")
           })
