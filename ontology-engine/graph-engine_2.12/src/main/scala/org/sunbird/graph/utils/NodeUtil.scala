@@ -143,15 +143,34 @@ object NodeUtil {
         relMap
     }
     
-    def convertJsonProperties(entry: util.Map.Entry[String, AnyRef], jsonProps: scala.List[String]) = {
-        if(jsonProps.contains(entry.getKey)) {
-            try {JsonUtils.deserialize(entry.getValue.asInstanceOf[String], classOf[Object])} //.readTree(entry.getValue.toString)}
-            catch { case e: Exception => entry.getValue }
-        }
-        else entry.getValue
+//    def convertJsonProperties(entry: util.Map.Entry[String, AnyRef], jsonProps: scala.List[String]) = {
+//        if(jsonProps.contains(entry.getKey)) {
+//            try {JsonUtils.deserialize(entry.getValue.asInstanceOf[String], classOf[Object])} //.readTree(entry.getValue.toString)}
+//            catch { case e: Exception => entry.getValue }
+//        }
+//        else entry.getValue
+//    }
+def convertJsonProperties(entry: util.Map.Entry[String, AnyRef], jsonProps: scala.List[String]) = {
+  if (jsonProps.contains(entry.getKey)) {
+    try {
+      JsonUtils.deserialize(entry.getValue.asInstanceOf[String], classOf[Object])
+    } catch {
+      case e: Exception => entry.getValue
     }
+  } else if (entry.getKey == "moreProperties") {
+    // Deserialize the JSON string associated with "moreProperties"
+    try {
+      JsonUtils.deserialize(entry.getValue.asInstanceOf[String], classOf[Object])
+    } catch {
+      case e: Exception => entry.getValue
+    }
+  } else {
+    entry.getValue
+  }
+}
 
-    // TODO: we should get the list from configuration.
+
+  // TODO: we should get the list from configuration.
     private def relationObjectAttributes(objectType: String): List[String] = {
       if (StringUtils.equalsAnyIgnoreCase("framework", objectType)) List("description", "status", "type") else List("description", "status")
     }
