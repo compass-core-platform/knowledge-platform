@@ -21,6 +21,9 @@
     "translations": {
       "dataType": "object"
     },
+    "moreProperties": {
+      "dataType": "object"
+    },
     "index": {
       "dataType": "number"
     },
@@ -66,9 +69,6 @@
     },
     "value": {
       "dataType": "string"
-    },
-    "moreProperties": {
-      "dataType": "object"
     }
   }
 }
