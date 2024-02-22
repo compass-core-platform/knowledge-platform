@@ -27,9 +27,9 @@ object MimeTypeManagerFactory {
 	)
 
 	def getManager(objectType: String, mimeType: String): MimeTypeManager = {
-		if(ONLINE_MIMETYPES.contains(mimeType))
+		if(ONLINE_MIMETYPES.contains(mimeType)) {
 			mimeTypeMgr.getOrElse(mimeType.toLowerCase(), defaultMimeTypeMgrImpl)
-		else if (StringUtils.equalsIgnoreCase("Asset", objectType)) {
+		} else if (StringUtils.equalsIgnoreCase("Asset", objectType)) {
 			mimeTypeMgr.get("assets").get
 		} else {
 			if(null != mimeType)
