@@ -180,6 +180,7 @@ class ContentController @Inject()(@Named(ActorNames.CONTENT_ACTOR) contentActor:
         val content = body.getOrDefault("content", new java.util.HashMap()).asInstanceOf[java.util.Map[String, Object]];
         content.putAll(headers)
         val contentRequest = getRequest(content, headers, "reviewContent")
+        logger.info("reviewContent controller : ",contentRequest);
         setRequestContext(contentRequest, version, objectType, schemaName)
         contentRequest.getContext.put("identifier", identifier);
         getResult(ApiId.REVIEW_CONTENT, contentActor, contentRequest)
