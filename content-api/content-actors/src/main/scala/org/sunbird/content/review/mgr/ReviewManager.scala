@@ -1,6 +1,7 @@
 package org.sunbird.content.review.mgr
 
 import org.sunbird.common.dto.{Request, Response, ResponseHandler}
+import org.sunbird.content.publish.mgr.PublishManager.logger
 import org.sunbird.graph.OntologyEngineContext
 import org.sunbird.graph.dac.model.Node
 import org.sunbird.graph.nodes.DataNode
@@ -16,11 +17,15 @@ object ReviewManager {
 		val identifier: String = node.getIdentifier
 		val mimeType = node.getMetadata().getOrDefault("mimeType", "").asInstanceOf[String]
 		val mgr = MimeTypeManagerFactory.getManager(node.getObjectType, mimeType)
+		logger.info("ReviewManager > mimeType: "+ mimeType)
+		logger.info("ReviewManager > mgr: "+ mgr)
+
 		val reviewFuture: Future[Map[String, AnyRef]] = mgr.review(identifier, node)
 		reviewFuture.map(result => {
 			val updateReq = new Request()
 			updateReq.setContext(request.getContext)
 			updateReq.putAll(result.asJava)
+			logger.info("ReviewManager > reviewFuture: "+ result.asJava)
 			DataNode.update(updateReq).map(node => {
 				ResponseHandler.OK.putAll(Map("identifier" -> node.getIdentifier.replace(".img", ""), "versionKey" -> node.getMetadata.get("versionKey")).asJava)
 			})

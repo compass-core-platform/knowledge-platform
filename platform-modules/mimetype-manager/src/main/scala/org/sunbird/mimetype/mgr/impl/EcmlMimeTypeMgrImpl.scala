@@ -3,6 +3,7 @@ package org.sunbird.mimetype.mgr.impl
 import java.io.{File, IOException, StringReader}
 import javax.xml.parsers.{DocumentBuilderFactory, ParserConfigurationException}
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 import org.sunbird.models.UploadParams
 import org.sunbird.cloudstore.StorageService
 import org.sunbird.common.Platform
@@ -26,7 +27,7 @@ class EcmlMimeTypeMgrImpl(implicit ss: StorageService) extends BaseMimeTypeManag
 	
 	private val DEFAULT_PACKAGE_MIME_TYPE = "application/zip"
 	private val maxPackageSize = if(Platform.config.hasPath("MAX_CONTENT_PACKAGE_FILE_SIZE_LIMIT")) Platform.config.getDouble("MAX_CONTENT_PACKAGE_FILE_SIZE_LIMIT") else 52428800
-
+	val logger = LoggerFactory.getLogger(classOf[EcmlMimeTypeMgrImpl])
 	override def upload(objectId: String, node: Node, uploadFile: File, filePath: Option[String], params: UploadParams)(implicit ec: ExecutionContext): Future[Map[String, AnyRef]] = {
 		validateFilePackage(uploadFile)
 
@@ -123,6 +124,7 @@ class EcmlMimeTypeMgrImpl(implicit ss: StorageService) extends BaseMimeTypeManag
 		req.put("identifier", node.getIdentifier)
 		val responseFuture = oec.graphService.readExternalProps(req, List("body"))
 		responseFuture.map(response => {
+			logger.info("EcmlMimeTypeMgrImpl > validate : "+ response)
 			if (!ResponseHandler.checkError(response)) {
 				val body = response.getResult.toMap.getOrDefault("body", "").asInstanceOf[String]
 				if(StringUtils.isBlank(artifactUrl) && StringUtils.isBlank(body))
