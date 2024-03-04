@@ -4,11 +4,11 @@ import java.io.{File, FileInputStream, FileOutputStream, IOException}
 import java.net.URL
 import java.nio.file.{Files, Path, Paths}
 import java.util.zip.{ZipEntry, ZipFile, ZipOutputStream}
-
 import org.apache.commons.io.{FileUtils, FilenameUtils}
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.validator.routines.UrlValidator
 import org.apache.tika.Tika
+import org.slf4j.LoggerFactory
 import org.sunbird.cloudstore.StorageService
 import org.sunbird.common.exception.{ClientException, ServerException}
 import org.sunbird.common.{DateUtils, HttpUtil, Platform, Slug}
@@ -43,7 +43,7 @@ class BaseMimeTypeManager(implicit ss: StorageService) {
 	protected val MISSING_REQUIRED_FIELDS = "Error! Missing One or More Required Fields in Object."
 	val COMPOSED_H5P_ZIP: String = "composed-h5p-zip"
 	val mimeTypesToValidate: List[String] = if (Platform.config.hasPath("validation.strictMimeType")) Platform.config.getStringList("validation.strictMimeType").asScala.toList else List("image/svg+xml")
-
+	val logger = LoggerFactory.getLogger(classOf[BaseMimeTypeManager])
 	def validateUploadRequest(objectId: String, node: Node, data: AnyRef)(implicit ec: ExecutionContext): Unit = {
 		if (StringUtils.isBlank(objectId))
 			throw new ClientException("ERR_INVALID_ID", "Please Provide Valid Identifier!")
@@ -286,6 +286,7 @@ class BaseMimeTypeManager(implicit ss: StorageService) {
 
 	def getEnrichedMetadata(status: String): Map[String, AnyRef] = {
 		val newStatus = if(List("FlagDraft", "FlagReview").contains(status)) "FlagReview" else "Review"
+		logger.info("getEnrichedMetadata newStatus > "+ newStatus)
 		Map("lastSubmittedOn"-> DateUtils.formatCurrentDate(), "reviewError" -> null, "status" -> newStatus)
 	}
 

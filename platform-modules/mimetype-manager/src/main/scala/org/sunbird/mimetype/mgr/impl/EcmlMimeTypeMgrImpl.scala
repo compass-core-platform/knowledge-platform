@@ -27,7 +27,7 @@ class EcmlMimeTypeMgrImpl(implicit ss: StorageService) extends BaseMimeTypeManag
 	
 	private val DEFAULT_PACKAGE_MIME_TYPE = "application/zip"
 	private val maxPackageSize = if(Platform.config.hasPath("MAX_CONTENT_PACKAGE_FILE_SIZE_LIMIT")) Platform.config.getDouble("MAX_CONTENT_PACKAGE_FILE_SIZE_LIMIT") else 52428800
-	val logger = LoggerFactory.getLogger(classOf[EcmlMimeTypeMgrImpl])
+	override val logger = LoggerFactory.getLogger(classOf[EcmlMimeTypeMgrImpl])
 	override def upload(objectId: String, node: Node, uploadFile: File, filePath: Option[String], params: UploadParams)(implicit ec: ExecutionContext): Future[Map[String, AnyRef]] = {
 		validateFilePackage(uploadFile)
 
@@ -103,9 +103,10 @@ class EcmlMimeTypeMgrImpl(implicit ss: StorageService) extends BaseMimeTypeManag
 
 	override def review(objectId: String, node: Node)(implicit ec: ExecutionContext, ontologyEngineContext: OntologyEngineContext): Future[Map[String, AnyRef]] = {
 		validate(node).map(result => {
-			if(result)
+			if(result) {
+				logger.info("after validate if result true > "+result)
 				getEnrichedMetadata(node.getMetadata.getOrDefault("status", "").asInstanceOf[String])
-			else throw new ServerException("ERR_NODE_REVIEW", "Something Went Wrong While Applying Review On Node Having Identifier : "+objectId)
+			} else throw new ServerException("ERR_NODE_REVIEW", "Something Went Wrong While Applying Review On Node Having Identifier : "+objectId)
 		})
 	}
 
@@ -126,15 +127,22 @@ class EcmlMimeTypeMgrImpl(implicit ss: StorageService) extends BaseMimeTypeManag
 		responseFuture.map(response => {
 			logger.info("EcmlMimeTypeMgrImpl > validate : "+ response)
 			if (!ResponseHandler.checkError(response)) {
+				logger.info("EcmlMimeTypeMgrImpl > validate > if (!ResponseHandler.checkError(response)) ")
 				val body = response.getResult.toMap.getOrDefault("body", "").asInstanceOf[String]
-				if(StringUtils.isBlank(artifactUrl) && StringUtils.isBlank(body))
+				logger.info("EcmlMimeTypeMgrImpl > validate > body : "+ body)
+				if(StringUtils.isBlank(artifactUrl) && StringUtils.isBlank(body)) {
+					logger.info("inside if of artifact and body check > ")
 					throw new ClientException("VALIDATOR_ERROR", MISSING_REQUIRED_FIELDS + " | [Either 'body' or 'artifactUrl' are required for processing of ECML content!")
+				}
 				if(StringUtils.isNotBlank(body)) {
 					val ecrf: Plugin = getEcrfObject(getBodyType(body), body)
+					logger.info("EcmlMimeTypeMgrImpl > validate > inside this condition >if(StringUtils.isNotBlank(body)) > ecrf: "+ ecrf)
 					val processedEcrf: Plugin = new ECMLProcessor(getBasePath(node.getIdentifier), node.getIdentifier).process(ecrf)
+					logger.info("EcmlMimeTypeMgrImpl > validate > inside this condition >if(StringUtils.isNotBlank(body)) > processedEcrf : "+ processedEcrf)
 					if(null!=processedEcrf) true else false
 				} else false
 			} else if (ResponseHandler.checkError(response) && StringUtils.isBlank(artifactUrl)) {
+				logger.info("EcmlMimeTypeMgrImpl > validate > inside this condition >else if (ResponseHandler.checkError(response) && StringUtils.isBlank(artifactUrl)) : ")
 				throw new ClientException("VALIDATOR_ERROR", MISSING_REQUIRED_FIELDS + " | [Either 'body' or 'artifactUrl' are required for processing of ECML content!")
 			} else true
 		})
