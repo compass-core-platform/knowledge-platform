@@ -4,6 +4,7 @@ import java.io.{File, IOException}
 import java.net.URL
 import org.apache.commons.io.{FileUtils, FilenameUtils}
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.{Logger, LoggerFactory}
 import org.sunbird.cloudstore.StorageService
 import org.sunbird.common.Platform
 import org.sunbird.common.exception.ClientException
@@ -16,31 +17,43 @@ trait LocalizeAssetProcessor extends IProcessor {
 	val PLUGIN_MEDIA_BASE_URL: String = Platform.getString("plugin.media.base.url", "https://dev.sunbirded.org")
 	val CONTENT_MEDIA_BASE_URL: String = Platform.config.getString("content.media.base.url")
 	val timeout: Long = if(Platform.config.hasPath("asset.max_download_time")) Platform.config.getLong("asset.max_download_time") else 60
-
+	val logger = LoggerFactory.getLogger(classOf[LocalizeAssetProcessor])
 	abstract override def process(ecrf: Plugin)(implicit ss: StorageService): Plugin = {
+		logger.info("inside localizeAssetProcessor > process")
 		val manifest = ecrf.manifest
+		logger.info("manifest "+manifest)
 		val updatedMedias:List[Media] = localizeAssets(manifest.medias)
+		logger.info("updateMedias "+updatedMedias)
 		val updatedManifest:Manifest = Manifest(manifest.id, manifest.data, manifest.innerText, manifest.cData, updatedMedias)
+		logger.info("updatedManifest "+updatedManifest)
 		super.process(Plugin(ecrf.id, ecrf.data, ecrf.innerText, ecrf.cData, ecrf.childrenPlugin, updatedManifest, ecrf.controllers, ecrf.events))
 	}
 
 	def localizeAssets(medias: List[Media])(implicit ss: StorageService, ec: ExecutionContext =  concurrent.ExecutionContext.Implicits.global): List[Media] = {
 		if(null != medias) {
+			logger.info("inside localizeAssets medias = "+ medias)
 			val future:Future[List[Media]] = Future.sequence(medias.filter(media=> StringUtils.isNotBlank(media.id) && StringUtils.isNotBlank(media.src) && StringUtils.isNotBlank(media.`type`) && !StringUtils.equalsIgnoreCase("youtube", media.`type`))
 			  .map(media => {
 				  Future {
 					  val dPath: String = if (widgetTypeAssets.contains(media.`type`)) getBasePath() + File.separator + "widgets" else getBasePath() + File.separator + "assets"
+					 logger.info("dPath " + dPath)
 					  val sFolder = getSubFolder(media)
+						logger.info("sFolder "+ sFolder)
 					  val downloadPath = if(StringUtils.isNotBlank(sFolder)) dPath + File.separator + sFolder else dPath
+						logger.info("downloadPath "+downloadPath)
 					  val file: File = downloadFile(downloadPath, getUrlWithPrefix(media.src))
+						logger.info("file "+file)
 					  if(null != media.data && !media.data.isEmpty && null != file && file.exists()) {
 						  val mSrc = if(StringUtils.isNotBlank(sFolder)) sFolder + File.separator + file.getName else file.getName
+							logger.info("mSrc "+mSrc)
 						  val mData = media.data ++ Map("src" -> mSrc)
+							logger.info("mData "+mData)
 						  Media(media.id, mData, media.innerText, media.cData, mSrc, media.`type`, media.childrenPlugin)
 					  } else media
 				  }
 			  }))
 			val mediaList:List[Media] = Await.result(future, Duration.apply(timeout, "second"))
+			logger.info("mediaList "+mediaList)
 			if(null != mediaList && !mediaList.isEmpty) mediaList ++ medias.filter(m => StringUtils.equalsIgnoreCase("youtube", m.`type`)) else medias
 		} else medias
 	}
