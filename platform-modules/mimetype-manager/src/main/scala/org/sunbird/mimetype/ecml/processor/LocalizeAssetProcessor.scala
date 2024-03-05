@@ -52,6 +52,7 @@ trait LocalizeAssetProcessor extends IProcessor {
 					  } else media
 				  }
 			  }))
+			logger.info("before mediaList Await.result")
 			val mediaList:List[Media] = Await.result(future, Duration.apply(timeout, "second"))
 			logger.info("mediaList "+mediaList)
 			if(null != mediaList && !mediaList.isEmpty) mediaList ++ medias.filter(m => StringUtils.equalsIgnoreCase("youtube", m.`type`)) else medias
@@ -68,14 +69,17 @@ trait LocalizeAssetProcessor extends IProcessor {
 	}
 
 	def getUrlWithPrefix(src: String) = {
+		logger.info("inside getUrlWithPrefix > src = "+src)
 		if (StringUtils.isNotBlank(src) && !src.startsWith("http")) {
 			if(!src.startsWith("/")) PLUGIN_MEDIA_BASE_URL + File.separator + src else PLUGIN_MEDIA_BASE_URL + src
 		} else src
 	}
 
 	def downloadFile(downloadPath: String, fileUrl: String): File = try {
+		logger.info("inside downloadFile > downloadPath = "+downloadPath)
 		createDirectory(downloadPath)
 		val file = new File(downloadPath + File.separator + getFileNameFromURL(fileUrl))
+		logger.info("inside downloadFile > file = "+file)
 		FileUtils.copyURLToFile(new URL(fileUrl), file)
 		file
 	} catch {
@@ -87,11 +91,13 @@ trait LocalizeAssetProcessor extends IProcessor {
 
 	def createDirectory(directoryName: String): Unit = {
 		val theDir = new File(directoryName)
+		logger.info("inside createDirectory > theDir = "+theDir)
 		if (!theDir.exists) theDir.mkdirs
 	}
 
 	def getFileNameFromURL(fileUrl: String): String = {
 		var fileName = FilenameUtils.getBaseName(fileUrl) + "_" + System.currentTimeMillis
+		logger.info("inside getFileNameFromUrl > fileName = "+ fileName)
 		if (!FilenameUtils.getExtension(fileUrl).isEmpty) fileName += "." + FilenameUtils.getExtension(fileUrl)
 		fileName
 	}
