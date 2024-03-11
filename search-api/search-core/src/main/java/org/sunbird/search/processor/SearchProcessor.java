@@ -69,8 +69,6 @@ public class SearchProcessor {
         List<Map<String, Object>> groupByFinalList = new ArrayList<Map<String, Object>>();
         SearchSourceBuilder query = processSearchQuery(searchDTO, groupByFinalList, true);
         logger.info("printing query :: "+query);
-        String avgRating = searchDTO.getAdditionalProperty("avgRating").toString();
-        logger.info("printing avgRating from dto :: "+avgRating);
         Future<SearchResponse> searchResponse = ElasticSearchUtil.search(
                 SearchConstants.COMPOSITE_SEARCH_INDEX,
                 query);
