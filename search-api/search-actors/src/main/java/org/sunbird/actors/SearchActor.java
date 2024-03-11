@@ -45,7 +45,8 @@ public class SearchActor extends SearchBaseActor {
         try {
             if (StringUtils.equalsIgnoreCase("INDEX_SEARCH", operation)) {
                 SearchDTO searchDTO = getSearchDTO(request);
-                logger.info("searchDto   ::" +searchDTO.getProperties());
+                logger.info("SearchDTO  ::: "+searchDTO.getAdditionalProperties());
+                logger.info("SearchDTO  implictProperties::: "+searchDTO.getImplicitFilterProperties());
                 Future<Map<String, Object>> searchResult = processor.processSearch(searchDTO, true);
                 return searchResult.map(new Mapper<Map<String, Object>, Response>() {
                     @Override
