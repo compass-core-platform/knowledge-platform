@@ -29,6 +29,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.NestedSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sunbird.common.Platform;
 import org.sunbird.search.client.ElasticSearchUtil;
 import org.sunbird.search.dto.SearchDTO;
@@ -51,6 +53,7 @@ public class SearchProcessor {
     private static final String ASC_ORDER = "asc";
     private static final String AND = "AND";
     private boolean relevanceSort = false;
+    private Logger logger = LoggerFactory.getLogger(SearchProcessor.class);
 
     public SearchProcessor() {
         ElasticSearchUtil.initialiseESClient(SearchConstants.COMPOSITE_SEARCH_INDEX,
@@ -65,6 +68,7 @@ public class SearchProcessor {
             throws Exception {
         List<Map<String, Object>> groupByFinalList = new ArrayList<Map<String, Object>>();
         SearchSourceBuilder query = processSearchQuery(searchDTO, groupByFinalList, true);
+        logger.info("printing query :: "+query);
         Future<SearchResponse> searchResponse = ElasticSearchUtil.search(
                 SearchConstants.COMPOSITE_SEARCH_INDEX,
                 query);
