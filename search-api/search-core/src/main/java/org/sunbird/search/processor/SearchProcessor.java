@@ -8,6 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.lucene.search.function.CombineFunction;
 import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery.ScoreMode;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder.Type;
 import org.elasticsearch.index.query.Operator;
@@ -40,6 +42,7 @@ import org.sunbird.telemetry.logger.TelemetryManager;
 import scala.concurrent.ExecutionContext;
 import scala.concurrent.Future;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,6 +72,7 @@ public class SearchProcessor {
         List<Map<String, Object>> groupByFinalList = new ArrayList<Map<String, Object>>();
         SearchSourceBuilder query = processSearchQuery(searchDTO, groupByFinalList, true);
         logger.info("printing query :: "+query);
+
         Future<SearchResponse> searchResponse = ElasticSearchUtil.search(
                 SearchConstants.COMPOSITE_SEARCH_INDEX,
                 query);
@@ -100,6 +104,11 @@ public class SearchProcessor {
                 return resp;
             }
         }, ExecutionContext.Implicits$.MODULE$.global());
+    }
+    private RangeQueryBuilder buildAvgRatingRangeQuery(int minRating, int maxRating) {
+        return QueryBuilders.rangeQuery("avgRating.raw")
+                .gte(minRating)
+                .lte(5);
     }
 
     public Map<String, Object> processCount(SearchDTO searchDTO) throws Exception {
@@ -325,6 +334,18 @@ public class SearchProcessor {
 
             String propertyName = (String) property.get("propertyName");
             logger.info("prepareSearchQuery propertyName:: "+propertyName);
+            if (propertyName.equalsIgnoreCase("avgRating")) {
+                opertation = SearchConstants.SEARCH_OPERATION_RANGE;
+                if (!values.isEmpty()) {
+                    Map<String, Object> rangeMap = new HashMap<>();
+                    rangeMap.put(SearchConstants.SEARCH_OPERATION_RANGE_GTE, values.get(0));
+                    rangeMap.put(SearchConstants.SEARCH_OPERATION_RANGE_LTE,5);
+                    logger.info("prepareSearchQuery avgRating:: "+rangeMap);
+                    values.clear();
+                    values.add(rangeMap);
+                }
+                logger.info("prepareSearchQuery avgRating opertation:: "+opertation);
+            }
             if (propertyName.equals("*")) {
                 relevanceSort = true;
                 propertyName = "all_fields";
