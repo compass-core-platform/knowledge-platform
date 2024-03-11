@@ -139,6 +139,7 @@ public class SearchActor extends SearchBaseActor {
         try {
             Map<String, Object> req = request.getRequest();
             TelemetryManager.log("Search Request: ", req);
+            logger.info("search request : "+req);
             String queryString = (String) req.get(SearchConstants.query);
             int limit = getIntValue(req.get(SearchConstants.limit));
             Boolean fuzzySearch = (Boolean) request.get("fuzzy");
@@ -149,6 +150,7 @@ public class SearchActor extends SearchBaseActor {
                 wordChainsRequest = false;
             List<Map> properties = new ArrayList<Map>();
             Map<String, Object> filters = (Map<String, Object>) req.get(SearchConstants.filters);
+            logger.info("printing filters :: "+filters);
             if (null == filters)
                 filters = new HashMap<>();
             if (filters.containsKey("tags")) {
