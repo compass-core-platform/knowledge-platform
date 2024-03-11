@@ -418,6 +418,7 @@ public class SearchActor extends SearchBaseActor {
         if (null == filters) filters = new HashMap<String, Object>();
         if (!filters.isEmpty()) {
             boolean publishedStatus = checkPublishedStatus(filters);
+            logger.info("filters.entrySet() :: "+filters.entrySet());
             for (Map.Entry<String, Object> entry : filters.entrySet()) {
                 if ("identifier".equalsIgnoreCase(entry.getKey())) {
                     List ids = new ArrayList<>();
@@ -460,8 +461,10 @@ public class SearchActor extends SearchBaseActor {
                     entry.setValue(new ArrayList<String>(objectTypes));
                 }
                 Object filterObject = entry.getValue();
+                logger.info("filterObject :: "+filterObject);
                 if (filterObject instanceof Map) {
                     Map<String, Object> filterMap = (Map<String, Object>) filterObject;
+                    logger.info("filterMap :: "+filterMap);
                     if (!filterMap.containsKey(SearchConstants.SEARCH_OPERATION_RANGE_MIN)
                             && !filterMap.containsKey(SearchConstants.SEARCH_OPERATION_RANGE_MAX)) {
                         for (Map.Entry<String, Object> filterEntry : filterMap.entrySet()) {
@@ -520,10 +523,12 @@ public class SearchActor extends SearchBaseActor {
                         Map<String, Object> property = new HashMap<String, Object>();
                         Map<String, Object> rangeMap = new HashMap<String, Object>();
                         Object minFilterValue = filterMap.get(SearchConstants.SEARCH_OPERATION_RANGE_MIN);
+                        logger.info("minFilterValue :: "+minFilterValue);
                         if (minFilterValue != null) {
                             rangeMap.put(SearchConstants.SEARCH_OPERATION_RANGE_GTE, minFilterValue);
                         }
                         Object maxFilterValue = filterMap.get(SearchConstants.SEARCH_OPERATION_RANGE_MAX);
+                        logger.info("maxFilterValue :: "+maxFilterValue);
                         if (maxFilterValue != null) {
                             rangeMap.put(SearchConstants.SEARCH_OPERATION_RANGE_LTE, maxFilterValue);
                         }
