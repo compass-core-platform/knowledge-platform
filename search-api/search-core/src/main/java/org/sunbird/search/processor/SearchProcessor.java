@@ -315,13 +315,16 @@ public class SearchProcessor {
             List<Object> values;
             try {
                 values = (List<Object>) property.get("values");
+                logger.info("prepareSearchQuery values:: "+values);
             } catch (Exception e) {
                 values = Arrays.asList(property.get("values"));
+                logger.info("prepareSearchQuery else values:: "+values);
             }
             values = values.stream().filter(value -> (null != value)).collect(Collectors.toList());
 
 
             String propertyName = (String) property.get("propertyName");
+            logger.info("prepareSearchQuery propertyName:: "+propertyName);
             if (propertyName.equals("*")) {
                 relevanceSort = true;
                 propertyName = "all_fields";
