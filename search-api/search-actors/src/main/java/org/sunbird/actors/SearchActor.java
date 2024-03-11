@@ -45,7 +45,7 @@ public class SearchActor extends SearchBaseActor {
         try {
             if (StringUtils.equalsIgnoreCase("INDEX_SEARCH", operation)) {
                 SearchDTO searchDTO = getSearchDTO(request);
-                logger.info("searchDto   ::" +searchDTO);
+                logger.info("searchDto   ::" +searchDTO.getProperties());
                 Future<Map<String, Object>> searchResult = processor.processSearch(searchDTO, true);
                 return searchResult.map(new Mapper<Map<String, Object>, Response>() {
                     @Override
@@ -410,6 +410,7 @@ public class SearchActor extends SearchBaseActor {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private List<Map<String, Object>> getSearchFilterProperties(Map<String, Object> filters, Boolean traversal, Request request)
             throws Exception {
+        logger.info("getSearchFilterProperties  :: "+filters);
         List<Map<String, Object>> properties = new ArrayList<Map<String, Object>>();
         if (null == filters) filters = new HashMap<String, Object>();
         if (!filters.isEmpty()) {
