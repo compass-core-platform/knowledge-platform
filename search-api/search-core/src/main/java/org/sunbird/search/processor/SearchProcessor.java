@@ -224,6 +224,7 @@ public class SearchProcessor {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         List<String> fields = searchDTO.getFields();
+        logger.info("processSearchQuery fields :: "+fields);
         if (null != fields && !fields.isEmpty()) {
             fields.add("objectType");
             fields.add("identifier");
@@ -310,7 +311,7 @@ public class SearchProcessor {
         List<Map> properties = searchDTO.getProperties();
         for (Map<String, Object> property : properties) {
             String opertation = (String) property.get("operation");
-
+            logger.info("prepareSearchQuery opertation:: "+opertation);
             List<Object> values;
             try {
                 values = (List<Object>) property.get("values");
