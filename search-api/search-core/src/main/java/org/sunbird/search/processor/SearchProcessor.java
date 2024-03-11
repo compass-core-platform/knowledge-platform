@@ -71,7 +71,6 @@ public class SearchProcessor {
             throws Exception {
         List<Map<String, Object>> groupByFinalList = new ArrayList<Map<String, Object>>();
         SearchSourceBuilder query = processSearchQuery(searchDTO, groupByFinalList, true);
-        logger.info("printing query :: "+query);
 
         Future<SearchResponse> searchResponse = ElasticSearchUtil.search(
                 SearchConstants.COMPOSITE_SEARCH_INDEX,
@@ -104,11 +103,6 @@ public class SearchProcessor {
                 return resp;
             }
         }, ExecutionContext.Implicits$.MODULE$.global());
-    }
-    private RangeQueryBuilder buildAvgRatingRangeQuery(int minRating, int maxRating) {
-        return QueryBuilders.rangeQuery("avgRating.raw")
-                .gte(minRating)
-                .lte(5);
     }
 
     public Map<String, Object> processCount(SearchDTO searchDTO) throws Exception {
@@ -233,7 +227,6 @@ public class SearchProcessor {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         List<String> fields = searchDTO.getFields();
-        logger.info("processSearchQuery fields :: "+fields);
         if (null != fields && !fields.isEmpty()) {
             fields.add("objectType");
             fields.add("identifier");
@@ -320,21 +313,17 @@ public class SearchProcessor {
         List<Map> properties = searchDTO.getProperties();
         for (Map<String, Object> property : properties) {
             String opertation = (String) property.get("operation");
-            logger.info("prepareSearchQuery opertation:: "+opertation);
             List<Object> values;
             try {
                 values = (List<Object>) property.get("values");
-                logger.info("prepareSearchQuery values:: "+values);
             } catch (Exception e) {
                 values = Arrays.asList(property.get("values"));
-                logger.info("prepareSearchQuery else values:: "+values);
             }
             values = values.stream().filter(value -> (null != value)).collect(Collectors.toList());
 
 
             String propertyName = (String) property.get("propertyName");
-            logger.info("prepareSearchQuery propertyName:: "+propertyName);
-            if (propertyName.equalsIgnoreCase("avgRating")) {
+            if (propertyName.equalsIgnoreCase(SearchConstants.AVGRATING)) {
                 opertation = SearchConstants.SEARCH_OPERATION_RANGE;
                 if (!values.isEmpty()) {
                     Map<String, Object> rangeMap = new HashMap<>();

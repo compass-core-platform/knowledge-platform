@@ -45,8 +45,6 @@ public class SearchActor extends SearchBaseActor {
         try {
             if (StringUtils.equalsIgnoreCase("INDEX_SEARCH", operation)) {
                 SearchDTO searchDTO = getSearchDTO(request);
-                logger.info("SearchDTO  ::: "+searchDTO.getAdditionalProperties());
-                logger.info("SearchDTO  implictProperties::: "+searchDTO.getImplicitFilterProperties());
                 Future<Map<String, Object>> searchResult = processor.processSearch(searchDTO, true);
                 return searchResult.map(new Mapper<Map<String, Object>, Response>() {
                     @Override
@@ -139,7 +137,6 @@ public class SearchActor extends SearchBaseActor {
         try {
             Map<String, Object> req = request.getRequest();
             TelemetryManager.log("Search Request: ", req);
-            logger.info("search request : "+req);
             String queryString = (String) req.get(SearchConstants.query);
             int limit = getIntValue(req.get(SearchConstants.limit));
             Boolean fuzzySearch = (Boolean) request.get("fuzzy");
@@ -150,7 +147,6 @@ public class SearchActor extends SearchBaseActor {
                 wordChainsRequest = false;
             List<Map> properties = new ArrayList<Map>();
             Map<String, Object> filters = (Map<String, Object>) req.get(SearchConstants.filters);
-            logger.info("printing filters :: "+filters);
             if (null == filters)
                 filters = new HashMap<>();
             if (filters.containsKey("tags")) {
@@ -413,12 +409,10 @@ public class SearchActor extends SearchBaseActor {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private List<Map<String, Object>> getSearchFilterProperties(Map<String, Object> filters, Boolean traversal, Request request)
             throws Exception {
-        logger.info("getSearchFilterProperties  :: "+filters);
         List<Map<String, Object>> properties = new ArrayList<Map<String, Object>>();
         if (null == filters) filters = new HashMap<String, Object>();
         if (!filters.isEmpty()) {
             boolean publishedStatus = checkPublishedStatus(filters);
-            logger.info("filters.entrySet() :: "+filters.entrySet());
             for (Map.Entry<String, Object> entry : filters.entrySet()) {
                 if ("identifier".equalsIgnoreCase(entry.getKey())) {
                     List ids = new ArrayList<>();
@@ -461,10 +455,8 @@ public class SearchActor extends SearchBaseActor {
                     entry.setValue(new ArrayList<String>(objectTypes));
                 }
                 Object filterObject = entry.getValue();
-                logger.info("filterObject :: "+filterObject);
                 if (filterObject instanceof Map) {
                     Map<String, Object> filterMap = (Map<String, Object>) filterObject;
-                    logger.info("filterMap :: "+filterMap);
                     if (!filterMap.containsKey(SearchConstants.SEARCH_OPERATION_RANGE_MIN)
                             && !filterMap.containsKey(SearchConstants.SEARCH_OPERATION_RANGE_MAX)) {
                         for (Map.Entry<String, Object> filterEntry : filterMap.entrySet()) {
@@ -523,12 +515,10 @@ public class SearchActor extends SearchBaseActor {
                         Map<String, Object> property = new HashMap<String, Object>();
                         Map<String, Object> rangeMap = new HashMap<String, Object>();
                         Object minFilterValue = filterMap.get(SearchConstants.SEARCH_OPERATION_RANGE_MIN);
-                        logger.info("minFilterValue :: "+minFilterValue);
                         if (minFilterValue != null) {
                             rangeMap.put(SearchConstants.SEARCH_OPERATION_RANGE_GTE, minFilterValue);
                         }
                         Object maxFilterValue = filterMap.get(SearchConstants.SEARCH_OPERATION_RANGE_MAX);
-                        logger.info("maxFilterValue :: "+maxFilterValue);
                         if (maxFilterValue != null) {
                             rangeMap.put(SearchConstants.SEARCH_OPERATION_RANGE_LTE, maxFilterValue);
                         }
