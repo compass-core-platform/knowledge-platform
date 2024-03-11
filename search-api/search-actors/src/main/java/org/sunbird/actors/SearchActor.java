@@ -7,6 +7,8 @@ import akka.util.Timeout;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sunbird.common.JsonUtils;
 import org.sunbird.common.Platform;
 import org.sunbird.common.dto.Request;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 
 public class SearchActor extends SearchBaseActor {
     private static Timeout WAIT_TIMEOUT = new Timeout(Duration.create(30000, TimeUnit.MILLISECONDS));
+    private Logger logger = LoggerFactory.getLogger(SearchActor.class);
 
     @Override
     public Future<Response> onReceive(Request request) throws Throwable {
@@ -42,6 +45,7 @@ public class SearchActor extends SearchBaseActor {
         try {
             if (StringUtils.equalsIgnoreCase("INDEX_SEARCH", operation)) {
                 SearchDTO searchDTO = getSearchDTO(request);
+                logger.info("searchDto   ::" +searchDTO);
                 Future<Map<String, Object>> searchResult = processor.processSearch(searchDTO, true);
                 return searchResult.map(new Mapper<Map<String, Object>, Response>() {
                     @Override
